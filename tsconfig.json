@@ -20,11 +20,14 @@
     "types": [
       "vite/client",
       "node"
-    ]
+    ],
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src",
+    "bench",
     "vite.config.ts",
+    "vitest.bench.config.ts",
     "playwright.config.ts",
     "e2e"
   ]

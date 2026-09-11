@@ -5,22 +5,22 @@
 **Open a graph in your browser, find out whether it is any good, ask it a question, and follow the
 answer back to the exact records it used.** No server, no install, nothing uploaded.
 
-A [Microsoft GraphRAG](https://github.com/microsoft/graphrag) index is one way a graph arrives.
-A node table and an edge table are another, and everything except the reports, the source text and
-the vectors works the same on both: the schema is counted from the rows, and the communities are
-found here when the graph did not bring any.
-
 [![ci](https://github.com/workdd/graphrag-inspector/actions/workflows/ci.yml/badge.svg)](https://github.com/workdd/graphrag-inspector/actions/workflows/ci.yml)
 [![live demo](https://img.shields.io/badge/demo-live-1f6feb)](https://workdd.github.io/graphrag-inspector/)
 [![license MIT](https://img.shields.io/badge/license-MIT-black)](LICENSE)
 [![runs in the browser](https://img.shields.io/badge/backend-none-black)](#try-it)
-[![GraphRAG 0.3 to 2.x](https://img.shields.io/badge/GraphRAG-0.3%20to%202.x-black)](#what-it-reads)
+[![GraphRAG 0.3 to 2.x](https://img.shields.io/badge/GraphRAG-0.3%20to%202.x-black)](docs/formats.md)
 
 ![The sample index opened on the types it was counted from, then the Health view naming two things to fix, then the whole graph with community clouds, then a question answered with citations and one of them followed to the record it names and to the evidence graph](docs/screenshots/ask.gif)
 
 **[Open the demo](https://workdd.github.io/graphrag-inspector/) → Ask → See a saved run.**
 No API key needed: the sample ships with a recorded run, so the whole answer-to-evidence path is one
 click away.
+
+A [Microsoft GraphRAG](https://github.com/microsoft/graphrag) index is one way a graph arrives. A
+node table and an edge table are another, and everything except the reports, the source text and the
+vectors works the same on both: the schema is counted from the rows, and the communities are found
+here when the graph did not bring any.
 
 ## The problem this solves
 
@@ -47,49 +47,40 @@ graphrag index  ──►  output/*.parquet  ──►  your application
 
 | When you need to | Open |
 | --- | --- |
-| Decide whether an index is worth building on, before shipping anything with it | **Health**. It names what is wrong with the index rather than leaving you to read the numbers: entities no community claims, one community swallowing a level, communities global search cannot read, descriptions too thin to rank on. Each finding says what it costs a search and what to change upstream, and the tab carries the count so you see it without opening it. |
-| Work out why an answer was wrong or vague | **Ask**. Ask the same question and read the retrieval: what was ranked, what made it into the prompt, what the token budget cut, and what the model cited out of everything it was handed. |
-| Prove an answer to a reviewer, or to yourself | **Ask**. Every citation opens the record it names, with the exact text that went into the prompt and the source chunk behind it. Nothing is paraphrased on the way. |
-| Answer a security or privacy question about what leaves the machine | **Ask** → **Show the prompt sent to the model**. The exact messages, and a diagram of the run with the calls that left the browser marked in red. [SECURITY.md](SECURITY.md) has the rest. |
-| See whether a re-clustering run actually helped | **Quality**. Two community sets side by side with NMI, ARI and an overlap table, and modularity for each level of each. |
-| Pick up an index somebody else built | **Types** first. The entity types, the relationships that actually occur between them, and the Parquet tables with their key and reference columns. Nothing declares this; it is counted from the rows. |
-| Choose between local and global search for your kind of question | **Ask**. Run both on the same question and compare what each one retrieved and cited. |
-| Explain the system to someone who will not read the code | **Ask** → **How a question reaches an answer**. The run drawn as retrieval, context window, model calls and response, with the counts and milliseconds it actually spent. |
+| Decide whether an index is worth building on | **Health**. It names what is wrong rather than leaving you to read the numbers, and says what each finding costs a search and what to change upstream. |
+| Work out why an answer was wrong, or prove one to a reviewer | **Ask**. What was ranked, what reached the prompt, what the budget cut, and what the model cited out of everything it was handed. Every citation opens the record it names. |
+| Answer a privacy question about what leaves the machine | **Ask** → **Show the prompt sent to the model**. The exact messages, and the run drawn with the calls that left the browser in red. |
+| Pick up a graph somebody else built | **Types** first. The entity types and the relationships that actually occur between them, counted from the rows rather than declared. |
 
 It is a viewer and a debugger, not a serving layer. Point your application at `graphrag query`; come
 here when you need to see what that query is standing on.
 
 ## Why this and not a graph viewer
 
-A graph viewer draws your nodes. This draws the way GraphRAG actually organizes them, and then shows
-you what a search does with them.
+A graph viewer draws your nodes. This draws the way the graph is actually organized, and then shows
+you what a search does with it.
 
-- **Communities first, not a hairball.** The index opens on its own schema and its community
-  hierarchy, because that is what GraphRAG builds and what nothing else shows.
+- **Communities first, not a hairball.** The graph opens on its own schema and its community
+  hierarchy. If it arrived without communities, they are found here.
 - **Answers you can check.** Every citation is a button that opens the record it names, with the
-  exact text that went into the prompt. Records that were retrieved and *not* cited stay on screen
-  too, so what the model ignored is as visible as what it used.
-- **The pipeline is on screen.** The retrieval, the token budget, each model call with its measured
-  milliseconds, and the prompt verbatim. Local and global search both, following GraphRAG's methods.
-- **Nothing to stand up.** A folder of Parquet and a browser tab. The official
-  `unified-search-app` needs Python, Streamlit and a pinned GraphRAG install.
+  exact text that went into the prompt. Records that were retrieved and *not* cited stay on screen,
+  so what the model ignored is as visible as what it used.
+- **The pipeline is on screen.** Retrieval, the token budget, each model call with its measured
+  milliseconds, and the prompt verbatim. Local and global search both.
+- **Nothing to stand up.** A folder and a browser tab. The official `unified-search-app` needs
+  Python, Streamlit and a pinned GraphRAG install.
 
-Status: 0.4, alpha. Loader, schema view, network view, community hierarchy and map, report
-inspector, integrity checks, quality metrics, partition comparison, source-text evidence and the
-Ask tab (local and global search against your own provider) are in place; see
-[docs/ROADMAP.md](docs/ROADMAP.md) for what comes next.
+Status: 0.4, alpha. One person's project so far. See [docs/ROADMAP.md](docs/ROADMAP.md) for what
+comes next and the [open issues](https://github.com/workdd/graphrag-inspector/issues) for what is
+known to be missing.
 
 ![Health of the sample index: the counts, then four findings, each naming what was measured, which search it affects and what to change](docs/screenshots/health-sample.png)
-
-![The types of the sample index: one node per entity type, one arrow per relationship that occurs between two types, with the Parquet tables and their key columns underneath](docs/screenshots/schema-sample.png)
-
-![The whole sample index as one network with community clouds around the members, every cloud named, and the entity types and communities listed above the canvas](docs/screenshots/network-sample.png)
 
 ![Ask tab: a question about what a queue's removal would affect, answered with inline citations back to entities, relationships, reports and claims](docs/screenshots/ask-sample.png)
 
 ![The same answer read backwards: the cited records outlined in red in the evidence graph, the picked record open beside it with the text that went into the prompt, and the retrieved records listed with their scores](docs/screenshots/ask-evidence-sample.png)
 
-![Communities view: one band per level, one circle per community sized by the entities it holds, curves joining each community to its parent, and the entities in no community as grey dots](docs/screenshots/communities-sample.png)
+More screenshots and what every view does: [docs/features.md](docs/features.md).
 
 ## Try it
 
@@ -98,290 +89,89 @@ npm install
 npm run dev          # http://127.0.0.1:5173
 ```
 
-Click **Open the sample dataset**, or drop your GraphRAG `output/` folder onto the page.
+Click **Open the sample dataset**, or drop your GraphRAG `output/` folder onto the page. Live demo
+with the sample: https://workdd.github.io/graphrag-inspector/
 
-Live demo with the sample: https://workdd.github.io/graphrag-inspector/
-
-To work with your own index every day, put its files under `local-data/<name>/` (ignored by Git and
-served only by the dev server) and open `http://127.0.0.1:5173/?data=./data/<name>`. To make it open
-by default, copy `.env.example` to `.env.development.local` and set `VITE_DEFAULT_DATA=./data/<name>`.
-Any folder served over HTTP works the same way with `?data=<url>`.
-
-To serve a built copy together with an index folder, without the dev server:
-
-```sh
-npm run build
-npm run serve -- --data ~/graphrag/output     # http://127.0.0.1:4180/?data=./data/output
-```
-
-That server is also what `npm pack` puts in the tarball, so a built copy can be moved to a machine
-that has Node and nothing else. The package is not on a registry.
-
-A `Dockerfile` builds a static image served by nginx; mount an index folder under
-`/usr/share/nginx/html/data/<name>` and open `?data=./data/<name>`. It has not been exercised on a
-machine with Docker yet.
-
-## Ask a question
-
-The **Ask** tab answers from the index you have open, using a model provider you configure. It
-follows GraphRAG's two search methods; the selection and the budgeting are this project's own, so an
-answer here is not guaranteed to match what `graphrag query` returns from the same index.
-
-- **Local** embeds the question, ranks entities by cosine against the entity vectors, and packs the
-  seeds, the relationships between them, the reports of the communities they belong to, the source
-  chunks behind them and the claims about them into a token budget, in that order of priority. It
-  needs an `embeddings.parquet` beside the index.
-- **Global** reads the community reports, splits them into context windows, asks the model for
-  scored points from each window, keeps the best of them and asks once more for the answer. It needs
-  `community_reports.parquet` and no embeddings, which is how GraphRAG's global search works too.
-
-Before configuring anything, you can read a run that was recorded earlier. The shipped sample
-carries one, and the tab offers it as **See a saved run**: a real answer, with its citations, its
-evidence graph and the records it passed over, all resolving against the index in front of you. Drop
-an `example-run.json` next to your own index and it does the same there; **Save this run** writes
-the file.
-
-Any OpenAI-compatible endpoint will do. The key lives in your browser's local storage, never in a
-saved run and never in a log line. Presets for Upstage and OpenAI fill in the two model names; the
-embedding model matters, because a question embedded with a different model than the sidecar was
-built with ranks nothing usefully.
-
-To skip typing the settings in every browser, copy `.env.example` to `.env.development.local` and
-set `VITE_LLM_BASE_URL`, `VITE_LLM_CHAT_MODEL`, `VITE_LLM_EMBED_MODEL` and, if you accept the
-consequence, `VITE_LLM_API_KEY`. Vite inlines those into the bundle, so `npm run build` refuses to
-publish a key unless `ALLOW_EMBEDDED_KEY=1` says it may. Anything typed in the app wins over the
-environment.
-
-Local search needs entity vectors, which GraphRAG writes to a vector store rather than to Parquet.
-**The Ask tab can build them for you**, through the provider you have already configured: it says how
-many entities and how many requests before it starts, it can be stopped, and the vectors stay in that
-browser and are reused the next time you open the same index. Nothing else is needed for a local
-search.
-
-To build them once and carry them between machines, `tools/embed_index` writes the same vectors to a
-file:
-
-```sh
-EMBED_API_KEY=… python3 tools/embed_index/embed_index.py --index ~/graphrag/output
-```
-
-It writes `embeddings.parquet` next to the index: one row per entity, the vector as fixed-length
-binary, and the model, the dimension and a SHA-256 of every source file in the file's metadata. The
-app checks those fingerprints and turns local search off, saying which file changed, when the
-sidecar was made from a different index.
-
-What comes back is meant to be checked rather than believed:
-
-- Every citation in the answer is a button. Picking one reads that record beside the answer, with
-  the exact text that went into the prompt, the links the run carried and the source text behind it.
-- The evidence graph draws the records that were sent to the model and outlines in red the ones the
-  answer actually cited. A node, a citation and a table row are three views of the same record, and
-  picking any of them reads it in place. Nothing sends you to another tab.
-- The table under the graph lists everything that was retrieved with its score, so the records the
-  model was given and ignored are as visible as the ones it used.
-- The embedding space plots the question and the entity vectors, reduced with PCA, in two or three
-  dimensions, marking what went into the prompt and what the budget cut. It says on the screen that
-  distance there is not the cosine the search used.
-- **How a question reaches an answer** draws the run itself: retrieval, context window, model call
-  and response, with the counts and milliseconds this run actually spent, and the calls that left
-  the browser bordered in red. **Show the prompt sent to the model** prints the messages verbatim.
-- **Save this run** writes a trace file (question, settings without the key, every context record,
-  the answer and the timings); **Open a trace** reads one back and relinks its citations, so a run
-  can be reviewed on a machine with no key at all.
-
-Example questions are offered from the data itself: entities that are actually reachable, named with
-their schema type, weighted towards the kinds of record people ask impact questions about.
+To work with your own graph every day, put its files under `local-data/<name>/` (ignored by Git,
+served only by the dev server) and open `?data=./data/<name>`. Any folder served over HTTP works the
+same way. [docs/formats.md](docs/formats.md) covers the built copy, the standalone server and the
+Docker image.
 
 ## What it reads
 
-| File | Used for |
+| Input | Needs |
 | --- | --- |
-| `entities.parquet` | Entity titles, types, descriptions. Required. |
-| `relationships.parquet` | Edges between entity titles. Required. |
-| `communities.parquet` | Levels, parents, members. Recommended: without it only the entity list and neighbourhood graphs are available (`public/samples/minimal` is such a set). |
-| `community_reports.parquet` | Summaries, findings and ranks. Global search reads these. |
-| `text_units.parquet`, `documents.parquet` | Source chunks and documents; the inspector shows the text behind an entity, relationship or community. |
-| `covariates.parquet` | Claims about entities, listed on the entity panel and offered to local search. |
-| `embeddings.parquet` | Optional sidecar of entity vectors, written by `tools/embed_index`. Local search and the embedding space need vectors; without this file the Ask tab offers to build them in the browser instead. |
-| `<label>_communities.parquet` | Any additional community set (for example `leiden_communities.parquet`) becomes a switchable partition. |
-| `nodes.csv`, `edges.csv` | A graph that never went near GraphRAG. Two tables, or just the edge table with its ends taken as the nodes. Column names are guessed from the usual ones and what was guessed is reported. |
-| `example-run.json` | Optional saved run. When a folder carries one, the Ask tab offers it as one click, so the tab can be read before any provider is configured. |
+| **GraphRAG output**, 0.3 to 2.x | `entities.parquet` and `relationships.parquet`. Communities, reports, text units, documents and claims are each used when present. |
+| **A plain graph** | `nodes.csv` and `edges.csv`, or just the edge table with its ends taken as the nodes. Column names are guessed from the usual ones, and what was guessed is reported. |
+| **Apache AGE exports** | The same layout as GraphRAG output. |
 
-Levels are shown from the root down: the root reads L0 and children count up, which is GraphRAG's
-own numbering. A file that numbers its roots highest (Apache AGE resource tiers) or starts at one is
-renumbered for display only, with the file's own number in the tooltip and a note beside the levels.
+Without communities, only the entity list and the neighbourhood graphs are available until you have
+them found here. Local search and the embedding space need entity vectors; the Ask tab can build
+them through your provider, or `tools/embed_index` writes them to a file.
 
-Several folders can be offered at once. `npm run serve -- --data a --data b` and the dev server both
-publish `data/index.json`, and the app turns it into buttons on the load screen and a picker in the
-top bar. A folder's `manifest.json` may carry `"label"` to name it there.
-
-File names from GraphRAG 0.3 to 2.x are recognized, including the `create_final_` prefix. When an
-older output has no `entity_ids` column, members are inferred from `relationship_ids` and the
-integrity panel says so (`public/samples/legacy` is such a set). Exports from Apache AGE that
-follow the same layout load as well.
+Every file name, version difference and level-numbering rule: [docs/formats.md](docs/formats.md).
 
 Size: a synthetic index with 9,211 entities, 23,810 relationships and 1,537 communities opens in
-under a second on a laptop; the collapsed map, the quality view and an 85-entity community graph
-each take about half a second (`samples/generate_sample.py --scale 53 --edge-factor 5`).
+under a second on a laptop (`samples/generate_sample.py --scale 53 --edge-factor 5`). Above that is
+[unmeasured](https://github.com/workdd/graphrag-inspector/issues/5).
 
-## What you see
+## Ask a question
 
-The app opens on **Types**: one node per entity type, one arrow per relationship that occurs
-between two types, both with counts, and under it the Parquet tables with their key and reference
-columns. Nothing declares this shape; it is counted from the rows. Picking a type or an arrow lists
-the records behind it and carries over into the network as a filter you can clear.
+The **Ask** tab answers from the graph you have open, using a model provider you configure. It
+follows GraphRAG's two search methods. **The selection and the budgeting are this project's own, so
+an answer here is not guaranteed to match what `graphrag query` returns from the same index** —
+[issue #12](https://github.com/workdd/graphrag-inspector/issues/12) tracks what that costs.
 
-Not every relationship is worth drawing as arrows. A triple that joins most of its possible pairs,
-such as a permission block, is a hairball under any layout, and one that hangs everything off a few
-hubs is really a list of counts. The schema view measures both and sends you to the form that reads:
-a grid for a dense pair, counts per hub for a star, arrows for the rest.
+- **Local** embeds the question, ranks entities by cosine, and packs the seeds, their relationships,
+  the reports of their communities, the source chunks and the claims into a token budget.
+- **Global** reads the community reports in windows, asks the model for scored points from each, and
+  asks once more for the answer. No embeddings, which is how GraphRAG's global search works too.
 
-The **Graph** view draws the records themselves: every entity and relationship on one canvas, with node
-colour for the entity type and size for the degree. Communities are an overlay you add, as clouds
-around their members or as node colour, and they can be taken away again. Turning the overlay on
-takes you to the free layout, which keeps each community together already, so the hulls appear
-around what is on screen instead of rearranging it; switching it off again moves nothing.
+Any OpenAI-compatible endpoint will do. The key lives in your browser's local storage, never in a
+saved run and never in a log line.
 
-The free layout treats a community as a container the layout must not scatter, and gives a link that
-leaves one a long ideal length while links inside it stay short. The clouds then come out as
-separate petals rather than one smear. A tidier catalogue, one disc per community laid out in rows
-with a guaranteed gap, is there as its own arrangement when that is what is wanted.
-
-Names appear as there is room for them. On every pan and zoom the visible nodes are measured in
-screen pixels and the best are named first, so a crowded picture names its hubs and the members of a
-community, and zooming in reveals the rest instead of piling text on text. Zooming spreads the graph
-out rather than magnifying it: dots and names hold their size on screen. Every cloud carries its
-community's name at a fixed size, and where two names would land on top of each other the smaller
-community gives way and gets its name back as you zoom in; every community is also listed under the
-canvas with the colour it was drawn in, so no name is ever out of reach.
-
-Clicking a record reads it where it stands. The graph stays exactly as it was; two hops around the
-record light up, everything else fades to a ghost rather than disappearing, and the record and its
-two rings hold a size on screen so they can be found with the whole graph in view. Double-clicking
-is the deliberate step that redraws the picture around that one record: a few neighbours of each
-kind are drawn with their names, everything else becomes a dashed bubble carrying a count, and a
-second ring shows what those neighbours reach in turn. A role with 274 neighbours reads as twenty
-nodes, and a bubble opens on click. Nothing anywhere asks you to choose a number of nodes: one
-switch says part of the data or all of it, and part always means a couple of representatives plus a
-count.
-
-A type bubble is sized by how many records it stands for, so one type can be many times the width
-of its neighbours and a force layout will drop the small ones inside the large one. Whatever the
-layout decides, the picture is settled afterwards: overlapping bubbles are pushed apart until none
-of them touch, names included, and the view is fitted again so nothing hangs over the edge. Parting
-them changes the fit, which changes how large the names are on screen and so how much room they
-need, so the three settle together over a few rounds.
-
-`Arrange: layers` puts one column per entity type and orders the columns so that as many
-relationships as possible run forward, using a greedy feedback arc set. It reports the share that
-made it, and draws the rest dashed red. Long columns wrap into sub-columns so the picture stays
-readable. Both Apache AGE graphs we test with reach 99%.
-
-The **Communities** view opens on every community at once: one band per level from the root down,
-one circle per community sized by the entities it holds, and a curve from each community to its
-parent. Entities that no community claims are drawn as grey dots under the bands and can be switched
-off. The nested box map, where a community opens into its members, is one switch away. Clicking
-inside a community reads it on the right: its summary, its level, how much of its edge weight stays
-inside, its children and its members. Dragging it moves the whole group, and double-clicking opens
-its own graph.
-
-The **Formation** view runs Leiden in the browser on the entities on screen and plays the run back:
-local moving sweep by sweep, refinement, then aggregation, with the graph recolouring as communities
-appear, a modularity curve, the shrinking working graph, and NMI/ARI against the community set the
-index shipped. Resolution, seed and scope are yours to change; the loaded communities never are.
-
-The rest, in short:
-
-- **Health**: a one-paragraph summary with the counts that matter, then the findings that follow from
-  them, worst first, each with the search it affects and the setting to change. What looks fine is
-  folded away rather than dropped, so the checks that passed are still on the record.
-- A sortable table of communities with internal and boundary relationship counts.
-- The community report (summary, findings, rank), parent path, child communities and members.
-- Integrity findings: duplicate ids, unresolved members or parents, children not nested in their
-  parent, size mismatches, dangling relationships.
-- The community map: the whole dataset as community boxes sized by member count, linked by lines
-  whose width is the number of relationships between two groups. Double-click a box to open it;
-  in a nested hierarchy its child communities and its own members appear inside, otherwise its
-  members do and dashed arrows show parents. Entities in no community form their own box. Layouts
-  run in a web worker and are cached, so the same picture comes back instantly.
-- Quality: modularity and coverage per level, size distributions, density and conductance per
-  community, and a side-by-side comparison of two community sets (NMI, ARI, overlap table).
-- Evidence: the text units and documents behind an entity, relationship or community, when the
-  index shipped them; claims from `covariates.parquet` on the entity panel.
-- Neighbourhood exploration: from any entity, everything within 1, 2 or 3 hops across community
-  boundaries, drawn inside the communities it belongs to.
-- Readable at scale: a hub-and-spoke relationship type that owns most of a big community's links
-  starts hidden (one click brings it back), degree-one leaves of one type on the same hub fold into
-  a single node, and communities can be drawn as translucent clouds around their members instead of
-  boxes. Every view and selection is a browser history entry, so the back button works.
-- The community graph: members drawn inside the community container, colored by entity type and
-  sized by degree, with labels that stay readable. Outside links reach dashed ghost nodes, and any
-  neighbouring community can be added to the same picture. Click a node for its neighbourhood and
-  incoming/outgoing links, a link for its description; filter relationship types, search, and drag
-  nodes. Layouts are deterministic and survive filtering.
-- PNG export of the graph and the map at 2x, CSV export of the community and quality tables, and a
-  shareable view state in the URL (`#view=map&set=leiden&community=11`).
-
-The views are grouped by what you came to do: **Ask** on its own, then the four you look around with
-(**Health**, **Types**, **Graph**, **Communities**, and **Focus** once something is selected), then
-the three you take the index apart with (**Quality**, **Matrix**, **Formation**). The strip is one
-keyboard stop with arrow keys between the views, and each view names the panel it opens.
-
-The interface is available in English and Korean; the switch sits in the top bar and the choice is
-remembered in the browser.
+What comes back is meant to be checked rather than believed: every citation opens its record, the
+evidence graph outlines what was cited inside what was sent, the retrieved-and-ignored records stay
+listed with their scores, and **Save this run** writes a trace a colleague can open with no key at
+all. The whole of it: [docs/search.md](docs/search.md).
 
 ## Development
 
 ```sh
 npm run typecheck
 npm test             # vitest: loaders, hierarchy, metrics, map model, evidence, search
-npm run e2e          # Playwright smoke test against the production build (uses installed Chrome)
-npm run build        # vite build, then scripts/check-dist.mjs refuses any dataset but the sample
+npm run e2e          # Playwright against the production build
+npm run build        # vite build, then scripts/check-dist.mjs
 npm run hooks        # installs the pre-push check once per clone
-uv run samples/generate_sample.py   # regenerates the synthetic sample
 ```
 
-Two checks keep private data and credentials out of the open: `scripts/check-sensitive.sh` runs
-before every push, once `npm run hooks` has installed the hook, and refuses data files outside
-`public/samples/`, environment files and identifiers that only occur in private exports;
-`scripts/check-dist.mjs` runs after every build and fails if `dist/` would publish anything but the
-sample, or an API key inlined from the environment. Real indexes belong in `local-data/`, which Git
-ignores and the build never copies.
+Two checks keep private data and credentials out of the open. `scripts/check-sensitive.sh` runs
+before every push and refuses data files outside `public/samples/`, environment files and
+identifiers that only occur in private exports; `scripts/check-dist.mjs` fails a build that would
+publish anything but the sample, or an API key inlined from the environment. Real graphs belong in
+`local-data/`, which Git ignores and the build never copies.
 
-Offline tools live in `tools/`: the entity-embedding sidecar (`embed_index`), an Apache AGE Parquet
-export, a Leiden re-clustering run, community summaries for a re-clustered set, and a partition
-comparison. Each has its own README section under [tools/README.md](tools/README.md).
+Offline tools live in [tools/](tools/README.md): the entity-embedding sidecar, an Apache AGE export,
+a Leiden re-clustering run, community summaries and a partition comparison.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [CHANGELOG.md](CHANGELOG.md) for releases.
+[CONTRIBUTING.md](CONTRIBUTING.md) is the workflow; [CHANGELOG.md](CHANGELOG.md) is the releases.
 
 ## Come and help
 
-**Issues and pull requests are welcome, and so is everything in between.** A screenshot of an index
+**Issues and pull requests are welcome, and so is everything in between.** A screenshot of a graph
 that looks wrong, a GraphRAG version that will not load, a sentence in the interface that reads
-badly, a question about why something works the way it does. You do not have to bring a fix with the
-report, and you do not have to be sure it is a bug.
+badly. You do not have to bring a fix with the report, and you do not have to be sure it is a bug.
 
-This is one person's project so far, and it would be a better one with more people in it. If you are
-looking for somewhere to start, the [open issues](https://github.com/workdd/graphrag-inspector/issues)
-carry what is planned, and the ones marked
-[good first issue](https://github.com/workdd/graphrag-inspector/labels/good%20first%20issue)
-are scoped small on purpose. [CONTRIBUTING.md](CONTRIBUTING.md) is the whole process; there is
-nothing hidden in a wiki.
+**Korean and English are both fine**, in issues, pull requests, commits and review.
+한국어로 편하게 남기셔도 됩니다. The
+[good first issue](https://github.com/workdd/graphrag-inspector/labels/good%20first%20issue) label
+is scoped small on purpose.
 
-**Korean and English are both fine** — in issues, in pull requests, in commit messages, in review.
-한국어로 편하게 남기셔도 됩니다.
-
-What would help most right now:
-
-- **Indexes that do not load, or load wrongly.** GraphRAG's output has changed shape several times
-  and this reads all of it; the version that produced the index and the file names it wrote tell us
-  more than a stack trace does. Never attach a real index, and
-  [SECURITY.md](SECURITY.md) says what else to keep out.
-- **Whether the Health findings are true of your index.** The thresholds are named in
-  `src/core/metrics/diagnosis.ts` with the reason each one sits where it does. If a finding is wrong
-  about a real index, the reason is wrong and we would like to know.
-- **Anything the interface says badly.** Both languages. Wording is not a small contribution here;
-  half of this project is telling somebody what they are looking at.
+What would help most right now: **a graph that does not load, or loads wrongly** (the version that
+produced it tells us more than a stack trace does, and never attach a real index —
+[SECURITY.md](SECURITY.md) says what to keep out); **whether the Health findings are true of your
+graph** (the thresholds are named in `src/core/metrics/diagnosis.ts` with the reason each sits where
+it does); and **anything the interface says badly**, in either language.
 
 ## License
 
@@ -390,9 +180,4 @@ MIT. This project started as a fork of
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The forked code lives on the `legacy-prototype`
 branch and is not used by the current application.
 
----
-
-## 한국어
-
-한국어 문서는 [README.ko.md](README.ko.md) 에 있습니다. 화면 언어도 상단의 **한국어** 버튼으로 바꿀 수
-있으며, 선택은 브라우저에 기억됩니다.
+한국어 문서는 [README.ko.md](README.ko.md) 에 있습니다.

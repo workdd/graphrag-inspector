@@ -1,7 +1,8 @@
 # Roadmap
 
-The goal is a viewer that anyone with GraphRAG output can use to understand how their communities
-are built. Apache AGE is one input adapter among several, not the center of the product.
+The goal is a viewer that anyone with a graph can use to judge it and to check the answers it
+gives. A GraphRAG index is one way a graph arrives; a node table and an edge table are another, and
+Apache AGE is a third. None of them is the center of the product.
 
 ## Principles
 
