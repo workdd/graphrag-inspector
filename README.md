@@ -111,9 +111,11 @@ them through your provider, or `tools/embed_index` writes them to a file.
 
 Every file name, version difference and level-numbering rule: [docs/formats.md](docs/formats.md).
 
-Size: a synthetic index with 9,211 entities, 23,810 relationships and 1,537 communities opens in
-under a second on a laptop (`samples/generate_sample.py --scale 53 --edge-factor 5`). Above that is
-[unmeasured](https://github.com/workdd/graphrag-inspector/issues/5).
+Size: 50,000 entities and 202,979 relationships open in 561 ms, find their communities in 2.5 s,
+and every view draws in under five seconds, with a peak heap of 386 MB. The exception is asking for
+one node per record (**Show: all of the data** with **Arrange: free**), which does not finish above
+about a thousand entities. [bench/browser.md](bench/browser.md) has the table and
+[bench/](bench/README.md) regenerates it.
 
 ## Ask a question
 

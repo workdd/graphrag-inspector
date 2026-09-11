@@ -100,9 +100,10 @@ npm run dev          # http://127.0.0.1:5173
 
 파일 이름, 버전 차이, 레벨 번호 규칙 전부는 [docs/formats.md](docs/formats.md) 에 있습니다.
 
-규모: 엔티티 9,211개, 관계 23,810개, 커뮤니티 1,537개인 합성 색인이 노트북에서 1초 안에 열립니다
-(`samples/generate_sample.py --scale 53 --edge-factor 5`). 그보다 큰 규모는 [아직 측정하지
-않았습니다](https://github.com/workdd/graphrag-inspector/issues/5).
+규모: 엔티티 50,000개와 관계 202,979개가 561ms 에 열리고, 커뮤니티를 2.5초에 찾고, 모든 화면이 5초 안에
+그려집니다. 최대 힙은 386MB 입니다. 예외는 레코드마다 노드를 하나씩 요구하는 경우(**Show: all of the data** 와
+**Arrange: free**)이며, 엔티티 1,000개 위에서는 끝나지 않습니다. 표는 [bench/browser.md](bench/browser.md) 에
+있고 [bench/](bench/README.md) 로 다시 잴 수 있습니다.
 
 ## 질문하기
 

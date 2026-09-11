@@ -20,7 +20,7 @@ import { parseCsv } from "../src/core/loaders/csv";
 const SIZES = (process.env.BENCH_SIZES ?? "1000,5000,10000,25000,50000").split(",").map(Number);
 const EDGE_FACTOR = Number(process.env.BENCH_EDGE_FACTOR ?? 4);
 /** How much of the graph ignores its own clusters. A third is the realistic case. */
-const MIX = Number(process.env.BENCH_MIX ?? 0);
+const MIX = Number(process.env.BENCH_MIX ?? 0.35);
 
 const ms = (from: number): number => Math.round(performance.now() - from);
 const mb = (): number => Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
