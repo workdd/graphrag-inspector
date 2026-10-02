@@ -1,0 +1,55 @@
+.analytics { display: grid; gap: 22px; padding: 4px 0 28px; min-width: 0; }
+.analytics h3 { margin: 0; font-size: var(--fs-2); }
+.analytics section > .muted { margin: 6px 0 0; font-size: var(--fs-0); }
+.analytics .table-head { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.analytics .table-head h3 { margin-right: auto; }
+
+.analytics .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.analytics .kpis > div { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 10px 14px; display: grid; gap: 2px; }
+.analytics .kpis b { font-size: var(--fs-4); font-variant-numeric: tabular-nums; }
+.analytics .kpis span { color: var(--ink-2); font-size: var(--fs-0); }
+
+.metric-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.metric-tile { all: unset; box-sizing: border-box; cursor: pointer; display: grid; gap: 4px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-lg); }
+.metric-tile:hover { border-color: var(--ink-3); }
+.metric-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.metric-tile.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.metric-name { font-weight: 600; font-size: var(--fs-1); }
+.metric-hist { width: 100%; height: 64px; display: block; }
+.metric-hist rect { fill: var(--ink-3); }
+.metric-tile.active .metric-hist rect { fill: var(--accent); }
+.metric-stats { font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+.rank-chart { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-lg); }
+.rank-chart .axis { stroke: var(--rule); }
+.rank-chart .tick { font-size: 11px; fill: var(--ink-3); }
+.rank-chart .rank-line { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.rank-chart .rank-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; cursor: pointer; }
+.rank-chart .rank-dot:hover { fill: var(--accent); }
+
+.rank-table td.title { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-table tbody tr, .shape-table tbody tr:not(.violators) { cursor: pointer; }
+.rank-table tbody tr:hover td, .shape-table tbody tr:not(.violators):hover td { background: #f6f7f2; }
+.rank-table th.sorted { color: var(--accent); }
+.bar-cell { position: relative; min-width: 84px; }
+.bar-cell .mini-bar { position: absolute; left: 6px; bottom: 4px; height: 3px; max-width: calc(100% - 12px); background: var(--accent-soft); border-radius: 2px; }
+.bar-cell .bar-num { position: relative; font-variant-numeric: tabular-nums; }
+
+.structure-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.structure-list li { background: var(--warn-soft); border: 1px solid #f1d5ba; border-radius: var(--radius-lg); padding: 10px 12px; }
+.structure-list .count { color: var(--warn); font-weight: 600; font-variant-numeric: tabular-nums; }
+.structure-list .muted { margin: 2px 0 6px; font-size: var(--fs-0); }
+.structure-list .pairs { margin: 0; font-size: var(--fs-0); overflow-wrap: anywhere; }
+
+.shapes .chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 240px; overflow: auto; }
+.shapes .chip { cursor: pointer; }
+.shapes .chip b { color: var(--warn); font-weight: 600; }
+.rule-kind { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-right: 4px; background: var(--accent-soft); color: var(--accent); }
+.rule-kind.single { background: var(--depth-2); color: var(--ink); }
+.shape-table tr.open td { background: #eef2ea; }
+.shape-table tr.violators td { background: #fafaf8; }
+.pass-cell { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pass-bar { display: inline-block; width: 60px; height: 6px; margin-right: 6px; background: var(--rule-2); border-radius: 3px; vertical-align: middle; overflow: hidden; }
+.pass-bar > span { display: block; height: 100%; background: var(--ok); }
+.rank-table th.pad-left, .rank-table td.title { padding-left: 14px; }
+.analytics .ctable th { padding: 7px 10px; }

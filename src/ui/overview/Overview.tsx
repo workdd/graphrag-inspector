@@ -32,10 +32,12 @@ const SearchView = lazy(() => import("../search/SearchView").then((m) => ({ defa
 const FormationView = lazy(() => import("../formation/FormationView").then((m) => ({ default: m.FormationView })));
 const NetworkView = lazy(() => import("../network/NetworkView").then((m) => ({ default: m.NetworkView })));
 const MatrixView = lazy(() => import("../matrix/MatrixView").then((m) => ({ default: m.MatrixView })));
+const CentralityView = lazy(() => import("../analytics/CentralityView").then((m) => ({ default: m.CentralityView })));
+const ShapesView = lazy(() => import("../analytics/ShapesView").then((m) => ({ default: m.ShapesView })));
 const CommunityBands = lazy(() => import("../map/CommunityBands").then((m) => ({ default: m.CommunityBands })));
 
-type View = "network" | "table" | "map" | "graph" | "quality" | "schema" | "formation" | "ask" | "matrix";
-const VIEWS: View[] = ["network", "table", "map", "graph", "quality", "schema", "formation", "ask", "matrix"];
+type View = "network" | "table" | "map" | "graph" | "quality" | "schema" | "formation" | "ask" | "matrix" | "centrality" | "shapes";
+const VIEWS: View[] = ["network", "table", "map", "graph", "quality", "schema", "formation", "ask", "matrix", "centrality", "shapes"];
 /** The shape of the index comes first; every other view is reached by picking something in it. */
 const DEFAULT_VIEW: View = "schema";
 
@@ -352,6 +354,8 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
                 { id: "schema", label: t("Types"), title: t("The entity types, the relationships between them, and the tables behind both"), onSelect: () => setView("schema") },
                 { id: "network", label: t("Graph"), title: t("Every entity and relationship; communities are an overlay you turn on"), onSelect: () => setView("network") },
                 { id: "map", label: t("Communities"), title: realPartition ? undefined : t("Needs communities.parquet"), disabled: !realPartition, onSelect: () => setView("map") },
+                { id: "centrality", label: t("Centrality"), title: t("Five measures of where each record sits, over every record"), onSelect: () => setView("centrality") },
+                { id: "shapes", label: t("Shape checks"), title: t("Relationship rules the data almost keeps, and the records that break them"), onSelect: () => setView("shapes") },
                 {
                   id: "graph",
                   label: `${t("Focus")}${seedTitle ? `: ${displayTitle(seedTitle)}` : selected ? `: ${selected.title}` : ""}`,
@@ -422,6 +426,10 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
           <FormationView dataset={dataset} partition={realPartition ?? null} selected={selected} spotlight={spotlight} onFocus={setFocus} />
         ) : view === "schema" ? (
           <SchemaView dataset={dataset} partition={realPartition ?? null} tables={result.tables} selectedId={selectedId} focus={focus} onSelect={select} onFocus={setFocus} onOpenGraph={openGraph} onOpenType={openType} onOpenTriple={openTriple} onOpenMatrix={openMatrix} onExplore={explore} />
+        ) : view === "centrality" ? (
+          <CentralityView dataset={dataset} onOpenEntity={openRecord} />
+        ) : view === "shapes" ? (
+          <ShapesView dataset={dataset} onOpenEntity={openRecord} />
         ) : view === "quality" && realPartition ? (
           <QualityView dataset={dataset} partition={realPartition} selectedId={selectedId} onSelect={select} />
         ) : view === "map" && realPartition && mapMode === "bands" ? (
