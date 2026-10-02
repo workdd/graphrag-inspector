@@ -291,10 +291,12 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
     setMapExpanded(next);
   };
 
+  // With nothing picked the column would only hold a prompt, so the view takes the width instead.
+  const noInspector = view === "ask" || (!selected && !focus);
   return (
     // The Ask tab reads its own records beside the answer, so the community inspector would sit
     // there repeating a prompt about a selection this view does not make. It gives up its column.
-    <div className={`app no-rail${view === "ask" ? " no-inspector" : ""}`}>
+    <div className={`app no-rail${noInspector ? " no-inspector" : ""}`}>
       <header className="topbar">
         <Mark size={22} />
         <span className="topbar-title">GraphRAG Inspector</span>
@@ -504,7 +506,7 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
         </div>
       </main>
 
-      {view === "ask" ? null : (
+      {noInspector ? null : (
       <aside className="inspector">
         <Inspector
           dataset={dataset}
