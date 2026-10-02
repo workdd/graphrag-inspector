@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { evidenceForEntity, snippet } from "../../core/evidence";
 import type { Selection } from "../../core/search/highlight";
 import type { ContextItem, SearchContext } from "../../core/search/types";
 import type { Dataset } from "../../core/model";
 import { useT } from "../i18n";
 import { readableLink, readableTitle } from "./label";
+
+const MiniGraph = lazy(() => import("../graph/MiniGraph").then((m) => ({ default: m.MiniGraph })));
 
 interface Props {
   dataset: Dataset;
@@ -45,6 +47,23 @@ export function RecordPanel({ dataset, context, selection, onSelect, onOpenEntit
     return evidenceForEntity(dataset, item.id).slice(0, 3);
   }, [selection, item, dataset]);
 
+  // The record in the loaded graph: by id when the engine kept it, else by its title.
+  const recordId = useMemo(() => {
+    if (!selection || selection.kind !== "entities" || !item) return null;
+    if (item.id && dataset.entities.has(item.id)) return item.id;
+    for (const e of dataset.entities.values()) if (e.title === item.title) return e.id;
+    return null;
+  }, [selection, item, dataset]);
+  // A click in the side graph can move past what this run retrieved; the centre then lives here.
+  const [center, setCenter] = useState<string | null>(null);
+  useEffect(() => setCenter(null), [recordId]);
+  const moveCenter = (id: string) => {
+    const title = dataset.entities.get(id)?.title;
+    const inRun = context.entities.find((e) => e.id === id || e.title === title);
+    if (inRun) onSelect({ kind: "entities", shortId: inRun.shortId });
+    else setCenter(id);
+  };
+
   if (!selection || !item) {
     return (
       <div className="record-pane empty">
@@ -73,6 +92,12 @@ export function RecordPanel({ dataset, context, selection, onSelect, onOpenEntit
         {item.score !== undefined ? <><dt>{t("Score")}</dt><dd>{item.score.toFixed(3)}</dd></> : null}
         {item.tokens !== undefined ? <><dt>{t("Tokens")}</dt><dd>{item.tokens}</dd></> : null}
       </dl>
+
+      {recordId ? (
+        <Suspense fallback={<div className="mini-graph mini-loading" />}>
+          <MiniGraph dataset={dataset} entityId={center ?? recordId} onCenter={moveCenter} />
+        </Suspense>
+      ) : null}
 
       <h4>{t("Text sent to the model")}</h4>
       <p className="record-text">{item.text}</p>

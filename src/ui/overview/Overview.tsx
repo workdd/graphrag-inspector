@@ -145,6 +145,8 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
     setFocus({ kind: "entity", id: entityId });
     setView("network");
   };
+  // Views without a graph of their own show the record in the side column and stay where they are.
+  const peek = (entityId: string) => setFocus({ kind: "entity", id: entityId });
   // A dense triple is unreadable as arrows, so picking one opens the grid instead of the graph.
   const openMatrix = (from: string, to: string) => {
     setPair({ from, to });
@@ -429,9 +431,9 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
         ) : view === "schema" ? (
           <SchemaView dataset={dataset} partition={realPartition ?? null} tables={result.tables} selectedId={selectedId} focus={focus} onSelect={select} onFocus={setFocus} onOpenGraph={openGraph} onOpenType={openType} onOpenTriple={openTriple} onOpenMatrix={openMatrix} onExplore={explore} />
         ) : view === "centrality" ? (
-          <CentralityView dataset={dataset} onOpenEntity={openRecord} />
+          <CentralityView dataset={dataset} onOpenEntity={peek} />
         ) : view === "shapes" ? (
-          <ShapesView dataset={dataset} onOpenEntity={openRecord} />
+          <ShapesView dataset={dataset} onOpenEntity={peek} />
         ) : view === "quality" && realPartition ? (
           <QualityView dataset={dataset} partition={realPartition} selectedId={selectedId} onSelect={select} />
         ) : view === "map" && realPartition && mapMode === "bands" ? (
@@ -524,6 +526,7 @@ export function Overview({ result, label, onReset, datasets, activeData, onOpenD
           inMap={view === "map"}
           mapOpen={selectedId !== null && mapExpanded.has(selectedId)}
           onToggleMap={toggleInMap}
+          mini={!["network", "graph", "map", "formation", "matrix"].includes(view)}
         />
       </aside>
       )}

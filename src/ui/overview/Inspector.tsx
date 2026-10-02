@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { claimsForEntity, evidenceForCommunity, evidenceForEntity, evidenceForRelationship, snippet, type Evidence } from "../../core/evidence";
 import { displayTitle } from "../../core/graph/palette";
 import { relationshipsOf } from "../../core/graph/subgraph";
@@ -9,6 +9,9 @@ import type { Community, Dataset, Entity, Partition } from "../../core/model";
 import type { GraphFocus } from "../graph/CommunityGraph";
 import { fmt, pct } from "../format";
 import { useT } from "../i18n";
+
+// Cytoscape is heavy; the side graph loads the first time a record is opened outside the graph views.
+const MiniGraph = lazy(() => import("../graph/MiniGraph").then((m) => ({ default: m.MiniGraph })));
 
 interface Props {
   dataset: Dataset;
@@ -26,6 +29,8 @@ interface Props {
   inMap: boolean;
   mapOpen: boolean;
   onToggleMap: () => void;
+  /** Draw the record's neighbourhood here, for views that have no graph of their own. */
+  mini?: boolean;
 }
 
 const MEMBER_PREVIEW = 24;
@@ -129,7 +134,7 @@ function CommunityPanel({ dataset, partition, community, metrics, onFocus, onSel
   );
 }
 
-function EntityPanel({ dataset, partition, community, onFocus, onSelect, inGraph, graphIds, onAddCommunity, onExplore, entityId }: Props & { entityId: string }) {
+function EntityPanel({ dataset, partition, community, onFocus, onSelect, inGraph, graphIds, onAddCommunity, onExplore, mini, entityId }: Props & { entityId: string }) {
   const { t } = useT();
   const index = useMemo(() => (partition ? membershipIndex(partition) : new Map<string, Community[]>()), [partition]);
   const entity = dataset.entities.get(entityId);
@@ -151,8 +156,9 @@ function EntityPanel({ dataset, partition, community, onFocus, onSelect, inGraph
         {t("{type}. {count} relationships.", { type: entity.type, count: fmt(relationships.length) })}
         {short !== entity.title && t(" Full title: {title}.", { title: entity.title })}
       </p>
+      {mini ? <Suspense fallback={<div className="mini-graph mini-loading" />}><MiniGraph dataset={dataset} entityId={entity.id} onCenter={(id) => onFocus({ kind: "entity", id })} onOpenGraph={onExplore} /></Suspense> : null}
       <Description text={entity.description} />
-      <button className="btn primary" onClick={() => onExplore(entity.id)} title={t("Everything within two hops, across communities")}>{t("Explore neighbourhood")}</button>
+      {mini ? null : <button className="btn primary" onClick={() => onExplore(entity.id)} title={t("Everything within two hops, across communities")}>{t("Explore neighbourhood")}</button>}
 
       <h3>{t("Communities")}</h3>
       {memberships.length === 0 ? (

@@ -966,6 +966,13 @@ const KO: Record<string, string> = {
   "Every record keeps this rule.": "모든 레코드가 이 규칙을 지킵니다.",
   "No proposed rule is broken at this share.": "이 기준에서 위반된 규칙이 없습니다.",
   "No rule reaches this share.": "이 기준에 이르는 규칙이 없습니다.",
+  "{n} hop": "{n}홉",
+  "{n} more not drawn": "{n}개는 그리지 않음",
+  "Open in graph tab": "전체 그래프로 열기",
+  "Neighbourhood of this record": "이 레코드의 이웃",
+  "Click a record to move the centre here, a group to list its records. Hover a line for its relationship.": "레코드를 누르면 그 자리에서 중심이 옮겨지고, 묶음을 누르면 속한 레코드가 나열됩니다. 선 위에 올리면 관계 이름이 보입니다.",
+  "{type} linked by {rel}: {n}. Pick one to move the centre.": "{rel} 로 이어진 {type} {n}개입니다. 하나를 고르면 중심이 옮겨집니다.",
+  "{n} records drawn": "레코드 {n}개",
 };
 
 export function fill(template: string, vars?: Vars): string {

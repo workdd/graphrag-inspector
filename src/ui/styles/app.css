@@ -401,3 +401,16 @@
 .health-fine .findings { margin-top: 8px; }
 .first-hint { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; padding: 9px 12px; border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: var(--radius); background: var(--surface); font-size: 12px; color: var(--ink-2); }
 .first-hint span { max-width: 88ch; }
+
+/* Side-column neighbourhood: the record in place, without leaving the page. */
+.mini-graph { margin: 10px 0 14px; display: grid; gap: 6px; }
+.mini-graph.mini-loading { height: 280px; background: var(--paper); border-radius: var(--radius-lg); }
+.mini-head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: var(--fs-0); }
+.mini-head .segmented button { padding: 3px 10px; font-size: var(--fs-0); }
+.mini-head .btn { margin-left: auto; }
+.mini-canvas { height: 280px; border: 1px solid var(--rule); border-radius: var(--radius-lg); background: #fbfcfa; }
+.mini-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--ink-2); }
+.mini-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.mini-hint { margin: 0; font-size: 11px; }
+.record-pane .mini-canvas { height: 240px; }
+.mini-bundle { display: grid; gap: 4px; max-height: 180px; overflow: auto; } .mini-bundle p { margin: 0; font-size: var(--fs-0); } .mini-bundle .chip { font-size: 12px; }
