@@ -5,6 +5,13 @@ import type { ContextItem, SearchContext } from "../../core/search/types";
 import type { Dataset } from "../../core/model";
 import { useT } from "../i18n";
 import { readableLink, readableTitle } from "./label";
+import { displayTitle } from "../../core/graph/palette";
+
+/** The id an export kept inside the description's JSON, if it kept one. */
+const storedId = (description: string | undefined): unknown => {
+  if (!description?.trimStart().startsWith("{")) return undefined;
+  try { return (JSON.parse(description) as { id?: unknown }).id; } catch { return undefined; }
+};
 
 const MiniGraph = lazy(() => import("../graph/MiniGraph").then((m) => ({ default: m.MiniGraph })));
 
@@ -51,8 +58,15 @@ export function RecordPanel({ dataset, context, selection, onSelect, onOpenEntit
   const recordId = useMemo(() => {
     if (!selection || selection.kind !== "entities" || !item) return null;
     if (item.id && dataset.entities.has(item.id)) return item.id;
-    for (const e of dataset.entities.values()) if (e.title === item.title) return e.id;
-    return null;
+    // A remote engine names records by its own id and the plain name; match the shown name, and the
+    // kind when it says one, so two records that share a name in different types stay apart.
+    const kind = typeof item.raw?.kind === "string" ? item.raw.kind : undefined;
+    let byName: string | null = null;
+    for (const e of dataset.entities.values()) {
+      if (item.id && storedId(e.description) === item.id) return e.id;
+      if (byName === null && (e.title === item.title || displayTitle(e) === item.title) && (!kind || e.type === kind)) byName = e.id;
+    }
+    return byName;
   }, [selection, item, dataset]);
   // A click in the side graph can move past what this run retrieved; the centre then lives here.
   const [center, setCenter] = useState<string | null>(null);
