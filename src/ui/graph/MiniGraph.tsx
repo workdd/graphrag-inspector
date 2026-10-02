@@ -14,8 +14,6 @@ interface Props {
   entityId: string;
   /** Moves the centre to another record, staying on this page. */
   onCenter: (id: string) => void;
-  /** Opens the full graph around the record; omitted where there is no graph to go to. */
-  onOpenGraph?: (id: string) => void;
 }
 
 const CAP = 40;
@@ -31,10 +29,13 @@ const STYLE: cytoscape.StylesheetJson = [
   { selector: "node.hover", style: { "border-width": 2, "border-color": "#8a94a0" } },
 ];
 
-export function MiniGraph({ dataset, entityId, onCenter, onOpenGraph }: Props) {
+export function MiniGraph({ dataset, entityId, onCenter }: Props) {
   const { t } = useT();
   const [hops, setHops] = useState(1);
   const [openBundle, setOpenBundle] = useState<string | null>(null);
+  // Bigger is the same graph with room to read it, over the page; nothing else changes.
+  const [big, setBig] = useState(false);
+  const cyRef = useRef<cytoscape.Core | null>(null);
   const host = useRef<HTMLDivElement>(null);
   const colors = useMemo(() => typeColors([...dataset.entities.values()].map((e) => e.type)), [dataset]);
   const peek = useMemo(() => peekGraph(dataset, entityId, hops, CAP), [dataset, entityId, hops]);
@@ -81,6 +82,7 @@ export function MiniGraph({ dataset, entityId, onCenter, onOpenGraph }: Props) {
         animate: false,
       } as cytoscape.LayoutOptions,
     });
+    cyRef.current = cy;
     if (import.meta.env.DEV) (window as unknown as { __cyMini?: cytoscape.Core }).__cyMini = cy;
     cy.fit(undefined, 16);
     if (cy.zoom() > 1.6) { cy.zoom(1.6); cy.center(); }
@@ -96,15 +98,34 @@ export function MiniGraph({ dataset, entityId, onCenter, onOpenGraph }: Props) {
         ev.target.toggleClass("open");
       } else if (id !== entityId) center.current(id);
     });
-    return () => cy.destroy();
+    return () => { cy.destroy(); cyRef.current = null; };
   }, [peek, dataset, colors, entityId]);
+
+  // The canvas changes size with the mode, so the graph is measured and fitted again.
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.resize();
+    // With room to spare the names can be read whole.
+    cy.style().selector("node").style("text-max-width", big ? "240px" : "90px").update();
+    cy.fit(undefined, big ? 40 : 16);
+    if (cy.zoom() > (big ? 2 : 1.6)) { cy.zoom(big ? 2 : 1.6); cy.center(); }
+  }, [big, peek]);
+  useEffect(() => {
+    if (!big) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setBig(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [big]);
 
   if (!peek) return null;
   const types = [...new Set(peek.nodes.map((n) => n.bundle?.type ?? dataset.entities.get(n.id)!.type))].sort();
   const bundle = openBundle ? peek.nodes.find((n) => n.id === openBundle)?.bundle : undefined;
   const hidden = peek.hidden.reduce((s, n) => s + n, 0);
   return (
-    <div className="mini-graph">
+    <>
+    {big ? <div className="mini-backdrop" onClick={() => setBig(false)} /> : null}
+    <div className={`mini-graph${big ? " big" : ""}`} role={big ? "dialog" : undefined} aria-modal={big || undefined} aria-label={big ? t("Neighbourhood of this record") : undefined}>
       <div className="mini-head">
         <span className="segmented" role="group" aria-label={t("Hops")}>
           {[1, 2].map((h) => (
@@ -112,7 +133,8 @@ export function MiniGraph({ dataset, entityId, onCenter, onOpenGraph }: Props) {
           ))}
         </span>
         <span className="muted">{t("{n} records drawn", { n: fmt(peek.nodes.length) })}{hidden ? ` · ${t("{n} more not drawn", { n: fmt(hidden) })}` : ""}</span>
-        {onOpenGraph ? <button className="btn small" onClick={() => onOpenGraph(entityId)}>{t("Open in graph tab")}</button> : null}
+        {big ? <b className="mini-title">{displayTitle(dataset.entities.get(entityId)!)}</b> : null}
+        <button className="btn small" onClick={() => setBig((b) => !b)}>{big ? t("Close (Esc)") : t("View larger")}</button>
       </div>
       <div ref={host} className="mini-canvas" role="img" aria-label={t("Neighbourhood of this record")} />
       {bundle ? (
@@ -131,5 +153,6 @@ export function MiniGraph({ dataset, entityId, onCenter, onOpenGraph }: Props) {
       </div>
       <p className="muted mini-hint">{t("Click a record to move the centre here, a group to list its records. Hover a line for its relationship.")}</p>
     </div>
+    </>
   );
 }

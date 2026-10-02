@@ -414,3 +414,9 @@
 .mini-hint { margin: 0; font-size: 11px; }
 .record-pane .mini-canvas { height: 240px; }
 .mini-bundle { display: grid; gap: 4px; max-height: 180px; overflow: auto; } .mini-bundle p { margin: 0; font-size: var(--fs-0); } .mini-bundle .chip { font-size: 12px; }
+.mini-backdrop { position: fixed; inset: 0; background: rgba(27, 36, 48, 0.35); z-index: 40; }
+.mini-graph.big { position: fixed; inset: 32px; z-index: 41; margin: 0; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: 0 12px 40px rgba(27, 36, 48, 0.25); grid-template-rows: auto minmax(0, 1fr) auto auto auto; }
+.mini-graph.big .mini-canvas { height: auto; min-height: 0; }
+.mini-graph.big .mini-bundle { max-height: 160px; }
+.mini-title { font-size: var(--fs-2); }
+@media (max-width: 600px) { .mini-graph.big { inset: 8px; } }

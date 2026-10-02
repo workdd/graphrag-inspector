@@ -156,7 +156,7 @@ function EntityPanel({ dataset, partition, community, onFocus, onSelect, inGraph
         {t("{type}. {count} relationships.", { type: entity.type, count: fmt(relationships.length) })}
         {short !== entity.title && t(" Full title: {title}.", { title: entity.title })}
       </p>
-      {mini ? <Suspense fallback={<div className="mini-graph mini-loading" />}><MiniGraph dataset={dataset} entityId={entity.id} onCenter={(id) => onFocus({ kind: "entity", id })} onOpenGraph={onExplore} /></Suspense> : null}
+      {mini ? <Suspense fallback={<div className="mini-graph mini-loading" />}><MiniGraph dataset={dataset} entityId={entity.id} onCenter={(id) => onFocus({ kind: "entity", id })} /></Suspense> : null}
       <Description text={entity.description} />
       {mini ? null : <button className="btn primary" onClick={() => onExplore(entity.id)} title={t("Everything within two hops, across communities")}>{t("Explore neighbourhood")}</button>}
 
