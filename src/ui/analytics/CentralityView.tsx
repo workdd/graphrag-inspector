@@ -113,7 +113,8 @@ export function CentralityView({ dataset, onOpenEntity }: Props) {
 
   const maxOf = Object.fromEntries(METRICS.map((m) => [m, Math.max(...c.values[m]) || 1])) as Record<MetricKey, number>;
   const rows = order.slice(0, top);
-  const csv = () => downloadText("centrality.csv", toCsv([
+  // The byte-order mark lets Excel read the file as UTF-8 instead of breaking Korean names.
+  const csv = () => downloadText("centrality.csv", "\uFEFF" + toCsv([
     ["name", "type", ...METRICS],
     ...order.map((i) => [name(i), entityAt(i).type, ...METRICS.map((m) => c.values[m][i]!)]),
   ]), "text/csv;charset=utf-8");

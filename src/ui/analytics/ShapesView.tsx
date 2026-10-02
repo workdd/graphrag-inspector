@@ -41,7 +41,7 @@ export function ShapesView({ dataset, onOpenEntity }: Props) {
   const broken = rules.filter((r) => r.violators.length > 0).length;
   const title = (id: string) => { const e = dataset.entities.get(id); return e ? displayTitle(e) : id; };
   const ruleKey = (r: ShapeRule) => `${r.kind}|${r.profile.focusType}|${r.profile.relType}|${r.profile.otherType}|${r.profile.direction}`;
-  const csv = () => downloadText("shape-violations.csv", toCsv([
+  const csv = () => downloadText("shape-violations.csv", "\uFEFF" + toCsv([
     ["rule", "kind", "pass_rate", "record", "type"],
     ...rules.flatMap((r) => r.violators.map((id) => [sentence(r, t), r.kind, r.passRate.toFixed(4), title(id), r.profile.focusType])),
   ]), "text/csv;charset=utf-8");
