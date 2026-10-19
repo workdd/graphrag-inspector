@@ -11,7 +11,7 @@
 [![백엔드 없음](https://img.shields.io/badge/backend-none-black)](#사용-방법)
 [![GraphRAG 0.3~2.x](https://img.shields.io/badge/GraphRAG-0.3%20to%202.x-black)](docs/formats.md)
 
-![표본 색인을 스키마로 열고, 상태 화면에서 고칠 것 두 건을 확인한 뒤, 전체 그래프를 커뮤니티 구름과 함께 그리고, 질문한 답변의 인용 하나를 눌러 해당 레코드와 근거 그래프까지 따라가는 화면](docs/screenshots/ask.gif)
+![표본 색인으로 데모를 한 바퀴 도는 화면. 행에서 센 스키마, 상태 진단, 커뮤니티 계층, 커뮤니티 구름을 두른 전체 그래프, 중심성, 관계 규칙, 단계별로 재생하는 Leiden, 그리고 저장된 답변의 인용을 눌러 근거 그래프 옆에 레코드를 여는 모습](docs/screenshots/ask.gif)
 
 **[데모 열기](https://workdd.github.io/graphrag-inspector/) → 질문 → 저장된 실행 보기.** API 키가 필요
 없습니다. 표본에 실행 기록 하나가 들어 있어 답변에서 근거까지 가는 경로 전체를 클릭 한 번으로 볼 수 있습니다.
@@ -65,13 +65,40 @@ graphrag index  ──►  output/*.parquet  ──►  서비스
 상태: 0.4, 알파. 지금까지는 한 사람의 프로젝트입니다. 이후 계획은 [docs/ROADMAP.md](docs/ROADMAP.md) 에, 아직 없는 것은
 [열린 이슈](https://github.com/workdd/graphrag-inspector/issues) 에 있습니다.
 
+## 데모에서 볼 수 있는 것
+
+아래는 전부 [라이브 데모](https://workdd.github.io/graphrag-inspector/)의 표본 색인에서 API 키 없이 볼 수 있습니다.
+
+| 탭 | 내용 |
+| --- | --- |
+| **상태** | 핵심 수치와, 문제를 이름으로 짚은 진단. 어느 커뮤니티에도 속하지 않은 엔티티, 한 레벨을 거의 차지한 커뮤니티, 관계가 없는 엔티티, 벡터가 없어 꺼진 Local 검색. 진단마다 어느 검색이 손해를 보는지와 상류에서 무엇을 바꿀지 적습니다. |
+| **스키마** | 행에서 센 스키마. 엔티티 유형마다 노드 하나, 두 유형 사이에 실제로 있는 관계마다 화살표 하나. 아래에는 색인의 표 전부와 키·참조 컬럼이 나옵니다. |
+| **그래프** | 커뮤니티마다 구름을 두른 전체 색인, 유형별로 펼쳐 보는 스키마, 엔티티 유형별 층 배치. 노드를 누르면 2홉 주변이 밝아집니다. PNG 로 내보냅니다. |
+| **커뮤니티** | 레벨마다 띠 하나, 커뮤니티마다 엔티티 수만큼 큰 원 하나, 부모로 잇는 곡선, 그리고 맨 아래 어느 커뮤니티에도 속하지 않은 엔티티. |
+| **중심성** | PageRank, 매개, 연결 수, 근접, 군집 계수를 브라우저에서 모든 레코드에 대해 잽니다. 지표별 분포, 순위 차트, 상위 N 표와 CSV. |
+| **관계 규칙** | 데이터가 거의 지키는 관계 규칙(SHACL 의 minCount 1, maxCount 1 에 해당)과 그 규칙을 어기는 레코드, 그리고 여러 유형 쌍에 쓰이는 관계 이름 같은 구조 점검 결과. CSV. |
+| **형성 과정** | Leiden 을 브라우저에서 단계별로 재생합니다. 단계마다 모듈성을 보여 주고, 결과를 색인이 가져온 커뮤니티와 비교합니다(NMI, ARI). |
+| **품질**, **행렬** | 레벨별 모듈성·포함 비율·크기, 커뮤니티별 conductance. 그리고 임의의 엔티티 유형 쌍에 대한 레코드 인접 행렬. |
+| **질문** | 저장된 실행. 모든 인용이 해당 레코드와 프롬프트에 들어간 문장을 여는 답변, 근거 그래프, 검색됐지만 인용되지 않은 레코드와 점수, 소요 시간을 적은 실행 도식, 프롬프트 원문. **질문 한 벌 돌리기**는 질문 목록을 한 번에 돌려 각 질문이 무엇에 닿았는지 표와 CSV 로 냅니다(제공자 설정 필요). |
+
+중심성, 관계 규칙, 질문 탭에서 레코드를 누르면 탭을 옮기지 않고 오른쪽 칸에 1~2홉 이웃 그래프가 그려지고, **크게 보기**는 같은 그래프를 화면 가득 키웁니다.
+
 ![표본 색인의 상태 화면. 핵심 수치와 네 건의 진단, 각 진단이 무엇을 측정했고 어느 검색에 영향을 주며 무엇을 바꿔야 하는지](docs/screenshots/health-sample.png)
 
-![질문 탭. 큐 하나를 제거하면 무엇이 영향을 받는지 묻고, 엔티티·관계·보고서·주장으로 되짚는 인용과 함께 답한 화면](docs/screenshots/ask-sample.png)
+![그래프 탭. 표본의 엔티티 189개 전부와 커뮤니티마다 이름 붙은 구름, 캔버스 위에 커뮤니티와 크기 목록](docs/screenshots/network-sample.png)
 
-![같은 답변을 거꾸로 읽은 화면. 근거 그래프에서 인용된 레코드에 빨간 테두리가 있고, 고른 레코드가 프롬프트에 들어간 문장과 함께 옆에 열리고, 검색된 레코드가 점수와 함께 나열된 모습](docs/screenshots/ask-evidence-sample.png)
+![중심성 탭. PageRank, 매개, 연결 수, 근접, 군집 계수 다섯 분포 칸과 아래 PageRank 순위 차트](docs/screenshots/centrality-sample.png)
 
-화면마다 무엇을 하고 왜 그렇게 동작하는지는 [docs/features.md](docs/features.md) 에 있습니다(영문).
+![관계 규칙 탭. 제안된 규칙 15개, 서른다섯 유형 쌍에 쓰인 관계 이름 하나, 위반 레코드가 있는 규칙 하나](docs/screenshots/shapes-sample.png)
+
+![형성 과정 탭의 마지막 단계. 커뮤니티 39개를 외곽선으로 그리고 모듈성 0.844, 불러온 커뮤니티와의 비교](docs/screenshots/formation-sample.png)
+
+![질문 탭. 큐 하나를 제거하면 무엇이 영향을 받는지 묻고, 엔티티·관계·보고서로 되짚는 인용과 함께 답한 화면](docs/screenshots/ask-sample.png)
+
+![같은 답변을 거꾸로 읽은 화면. 근거 그래프에서 인용된 레코드에 테두리가 있고, 고른 관계가 프롬프트에 들어간 문장과 함께 옆에 열리고, 검색된 엔티티가 점수와 함께 나열된 모습](docs/screenshots/ask-evidence-sample.png)
+
+화면마다 무엇을 하고 왜 그렇게 동작하는지는 [docs/features.md](docs/features.md) 에 있습니다(영문). 스크린샷과 GIF 는
+`scripts/capture-readme.mjs` 가 표본으로 생성합니다.
 
 ## 사용 방법
 
@@ -130,6 +157,7 @@ npm test             # vitest: 적재기, 계층, 지표, 지도 모델, 근거,
 npm run e2e          # 프로덕션 빌드 대상 Playwright 테스트
 npm run build        # vite 빌드 후 scripts/check-dist.mjs
 npm run hooks        # 클론마다 한 번, pre-push 검사 설치
+node scripts/capture-readme.mjs   # README 스크린샷과 GIF, `vite preview --port 4174` 대상
 ```
 
 검사 두 가지가 실데이터와 자격 증명을 공개 밖으로 내보내지 않습니다. `scripts/check-sensitive.sh` 는 푸시 전에 돌면서
