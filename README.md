@@ -11,7 +11,7 @@ answer back to the exact records it used.** No server, no install, nothing uploa
 [![runs in the browser](https://img.shields.io/badge/backend-none-black)](#try-it)
 [![GraphRAG 0.3 to 2.x](https://img.shields.io/badge/GraphRAG-0.3%20to%202.x-black)](docs/formats.md)
 
-![The sample index opened on the types it was counted from, then the Health view naming two things to fix, then the whole graph with community clouds, then a question answered with citations and one of them followed to the record it names and to the evidence graph](docs/screenshots/ask.gif)
+![A tour of the demo on the sample index: the types counted from the rows, the Health findings, the community levels, the whole graph with community clouds, centrality, the relationship rules, Leiden replayed step by step, then a saved answer whose citation opens its record beside the evidence graph](docs/screenshots/ask.gif)
 
 **[Open the demo](https://workdd.github.io/graphrag-inspector/) → Ask → See a saved run.**
 No API key needed: the sample ships with a recorded run, so the whole answer-to-evidence path is one
@@ -74,13 +74,42 @@ Status: 0.4, alpha. One person's project so far. See [docs/ROADMAP.md](docs/ROAD
 comes next and the [open issues](https://github.com/workdd/graphrag-inspector/issues) for what is
 known to be missing.
 
+## What the demo shows
+
+Everything here is the sample index in the [live demo](https://workdd.github.io/graphrag-inspector/),
+with no API key.
+
+| Tab | What you get |
+| --- | --- |
+| **Health** | The counts, then each problem by name: entities no community claims, one community holding most of a level, entities with no relationship, local search off for want of vectors. Each says which search it costs and what to change upstream. |
+| **Types** | The schema counted from the rows: one node per entity type, one arrow per relationship that occurs between two types. Below it, every table in the index with its key and reference columns. |
+| **Graph** | The whole index with a cloud around each community, or the schema you can open type by type, or layers by entity type. Clicking a node lights up two hops around it. Exports a PNG. |
+| **Communities** | One band per level, one circle per community sized by its entities, curves to the parent, and the entities in no community underneath. |
+| **Centrality** | PageRank, betweenness, degree, closeness and clustering measured in the browser over every record: a distribution per measure, a rank chart, and a top-N table with CSV. |
+| **Shape checks** | Relationship rules the data almost keeps (the SHACL minCount 1 and maxCount 1 kind), the records that break them, and structural findings such as one relationship name used for many type pairs. CSV. |
+| **Formation** | Leiden replayed step by step in the browser, with modularity per step and the result compared against the communities the index brought (NMI, ARI). |
+| **Quality** and **Matrix** | Modularity, coverage and size per level, conductance per community; and an adjacency matrix of the records for any pair of entity types. |
+| **Ask** | The saved run: an answer whose every citation opens its record and the text that went into the prompt, the evidence graph, the records retrieved and not cited with their scores, the run drawn with its timings, and the prompt verbatim. **Ask the whole set** runs a list of questions and writes a table and CSV of what each one reached (needs a provider). |
+
+Clicking a record in Centrality, Shape checks or Ask draws its one- or two-hop neighbourhood in the
+right-hand column without leaving the tab, and **View larger** fills the screen with the same graph.
+
 ![Health of the sample index: the counts, then four findings, each naming what was measured, which search it affects and what to change](docs/screenshots/health-sample.png)
 
-![Ask tab: a question about what a queue's removal would affect, answered with inline citations back to entities, relationships, reports and claims](docs/screenshots/ask-sample.png)
+![Graph tab: all 189 entities of the sample with a named cloud around each community, the communities listed above the canvas with their sizes](docs/screenshots/network-sample.png)
 
-![The same answer read backwards: the cited records outlined in red in the evidence graph, the picked record open beside it with the text that went into the prompt, and the retrieved records listed with their scores](docs/screenshots/ask-evidence-sample.png)
+![Centrality tab: five distribution tiles for PageRank, betweenness, degree, closeness and clustering, and PageRank by rank below](docs/screenshots/centrality-sample.png)
 
-More screenshots and what every view does: [docs/features.md](docs/features.md).
+![Shape checks tab: fifteen rules proposed, one relationship name used for thirty-five type pairs, and the one rule some records break](docs/screenshots/shapes-sample.png)
+
+![Formation tab at the last step: thirty-nine communities drawn as hulls, modularity 0.844, and the comparison with the loaded communities](docs/screenshots/formation-sample.png)
+
+![Ask tab: a question about what a queue's removal would affect, answered with inline citations back to entities, relationships and reports](docs/screenshots/ask-sample.png)
+
+![The same answer read backwards: the cited records outlined in the evidence graph, the picked relationship open beside it with the text that went into the prompt, and the retrieved entities listed with their scores](docs/screenshots/ask-evidence-sample.png)
+
+More on every view: [docs/features.md](docs/features.md). The screenshots and the GIF are generated
+by `scripts/capture-readme.mjs` from the sample.
 
 ## Try it
 
@@ -145,6 +174,7 @@ npm test             # vitest: loaders, hierarchy, metrics, map model, evidence,
 npm run e2e          # Playwright against the production build
 npm run build        # vite build, then scripts/check-dist.mjs
 npm run hooks        # installs the pre-push check once per clone
+node scripts/capture-readme.mjs   # README screenshots and GIF, against `vite preview --port 4174`
 ```
 
 Two checks keep private data and credentials out of the open. `scripts/check-sensitive.sh` runs
